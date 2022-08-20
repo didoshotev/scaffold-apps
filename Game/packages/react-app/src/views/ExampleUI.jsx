@@ -1,6 +1,6 @@
 import { Button, Card, DatePicker, Divider, Input, Progress, Slider, Spin, Switch } from "antd";
 import React, { useState } from "react";
-import { utils } from "ethers";
+import { ethers, utils } from "ethers";
 import { SyncOutlined } from "@ant-design/icons";
 
 import { Address, Balance, Events } from "../components";
@@ -28,17 +28,12 @@ export default function ExampleUI({
         <h4>purpose: {purpose}</h4>
         <Divider />
         <div style={{ margin: 8 }}>
-          <Input
-            onChange={e => {
-              setNewPurpose(e.target.value);
-            }}
-          />
           <Button
             style={{ marginTop: 8 }}
             onClick={async () => {
               /* look how you call setPurpose on your contract: */
               /* notice how you pass a call back for tx updates too */
-              const result = tx(writeContracts.YourContract.setPurpose(newPurpose), update => {
+              const result = tx(writeContracts.YourContract.diceRoll({ value: ethers.utils.parseEther("0.025")}), update => {
                 console.log("📡 Transaction Update:", update);
                 if (update && (update.status === "confirmed" || update.status === 1)) {
                   console.log(" 🍾 Transaction " + update.hash + " finished!");
@@ -57,7 +52,7 @@ export default function ExampleUI({
               console.log(await result);
             }}
           >
-            Set Purpose!
+            DICE ROLL
           </Button>
         </div>
         <Divider />
@@ -70,6 +65,7 @@ export default function ExampleUI({
           ensProvider={mainnetProvider}
           fontSize={16}
         />
+        
         <Divider />
         {/* use utils.formatEther to display a BigNumber: */}
         <h2>Your Balance: {yourLocalBalance ? utils.formatEther(yourLocalBalance) : "..."}</h2>
@@ -79,7 +75,6 @@ export default function ExampleUI({
         <div>🐳 Example Whale Balance:</div>
         <Balance balance={utils.parseEther("1000")} provider={localProvider} price={price} />
         <Divider />
-        {/* use utils.formatEther to display a BigNumber: */}
         <h2>Your Balance: {yourLocalBalance ? utils.formatEther(yourLocalBalance) : "..."}</h2>
         <Divider />
         Your Contract Address:
@@ -157,7 +152,7 @@ export default function ExampleUI({
       <Events
         contracts={readContracts}
         contractName="YourContract"
-        eventName="SetPurpose"
+        eventName="DiceRoll"
         localProvider={localProvider}
         mainnetProvider={mainnetProvider}
         startBlock={1}
